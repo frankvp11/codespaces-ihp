@@ -28,6 +28,7 @@
                         base
                         wai
                         text
+                        mmark
 
                         # Uncomment on local development for testing
                         # hspec
