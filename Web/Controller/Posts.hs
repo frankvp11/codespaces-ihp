@@ -7,6 +7,7 @@ import Web.View.Posts.Edit
 import Web.View.Posts.Show
 import qualified Text.MMark as MMark
 import Control.Lens (none, non)
+import Application.Script.Prelude (fetchCount)
 
 instance Controller PostsController where
     action PostsAction = do
@@ -23,6 +24,16 @@ instance Controller PostsController where
         post <- fetch postId
             >>= pure . modify #comments (orderByDesc #createdAt)
             >>= fetchRelated #comments
+
+        reactions <- query @PostsReaction
+            |> filterWhere (#postId, get #id post)
+            |> distinctOn #emoji
+            |> fetchCount
+
+        post <- post
+            |> set #reactions reactions
+            |> fetchRelated #reactions
+        
 
         render ShowView { .. }
 

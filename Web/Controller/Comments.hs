@@ -15,6 +15,7 @@ instance Controller CommentsController where
     action NewCommentAction { postId } = do
         let comment = newRecord
                     |> set #postId postId
+
         post <- fetch postId
 
         render NewView { .. }
@@ -44,13 +45,16 @@ instance Controller CommentsController where
             |> buildComment
             |> ifValid \case
                 Left comment -> do
-                    post <- fetch comment.postId -- <---- NEW
+
+                    post <- fetch (get #postId comment)
+                    
+
                     render NewView { .. }
 
                 Right comment -> do
                     comment <- comment |> createRecord
                     setSuccessMessage "Comment created"
-                    redirectTo ShowPostAction { postId = comment.postId }
+                    redirectTo ShowPostAction { postId = get #postId comment }
 
     action DeleteCommentAction { commentId } = do
         comment <- fetch commentId

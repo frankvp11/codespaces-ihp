@@ -1,0 +1,2 @@
+ALTER TABLE comments ALTER COLUMN post_id SET NOT NULL;
+ALTER TABLE comments DROP COLUMN comment_id;
