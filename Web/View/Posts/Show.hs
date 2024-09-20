@@ -3,7 +3,9 @@ import Web.View.Prelude
 import qualified Text.MMark as MMark
 
 -- Updated data type to include post and emoji counts
-data ShowView = ShowView { post :: Include' ["comments", "posts_reactions"] Post }
+data ShowView = ShowView { post :: Include "comments" Post
+                         , reactions :: [(Text, Int)]
+                         }
 
 instance View ShowView where
     html ShowView { .. } = [hsx|
@@ -63,6 +65,11 @@ instance View ShowView where
                             [ breadcrumbLink "Posts" PostsAction
                             , breadcrumbText "Show Post"
                             ]
+            renderReaction (emoji, count) = [hsx|
+                <div class="emoji-count">
+                    {emoji} <span>({count})</span>
+                </div>
+            |]
 
 renderMarkdown text =
     case text |> MMark.parse "" of

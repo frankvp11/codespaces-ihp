@@ -28,14 +28,18 @@ instance Controller PostsController where
         reactions <- query @PostsReaction
             |> filterWhere (#postId, get #id post)
             |> distinctOn #emoji
-            |> fetchCount
-
-        post <- post
-            |> set #reactions reactions
-            |> fetchRelated #reactions
+            |> fetch
+        
+        reactions <- mapM (\r -> do
+                            count <- query @PostsReaction
+                                |> filterWhere (#postId, post.id)
+                                |> filterWhere (#emoji, r.emoji)
+                                |> fetchCount
+                            pure (r.emoji, count)     
+                    ) reactions
         
 
-        render ShowView { .. }
+        render ShowView { post = post, reactions = reactions }
 
     action EditPostAction { postId } = do
         post <- fetch postId
