@@ -10,7 +10,8 @@ CREATE TABLE comments (
     post_id UUID NOT NULL,
     author TEXT NOT NULL,
     body TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    comment_id UUID DEFAULT NULL
 );
 CREATE INDEX comments_post_id_index ON comments (post_id);
 CREATE TABLE comments_reactions (
@@ -29,11 +30,6 @@ CREATE TABLE posts_reactions (
 );
 CREATE INDEX posts_reactions_created_at_index ON posts_reactions (created_at);
 CREATE INDEX posts_reactions_post_id_index ON posts_reactions (post_id);
-ALTER TABLE comments_reactions ADD CONSTRAINT comments_reactions_ref_comment_id FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE NO ACTION;
-ALTER TABLE comments ADD CONSTRAINT comments_ref_post_id FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE NO ACTION;
-ALTER TABLE posts_reactions ADD CONSTRAINT posts_reactions_ref_post_id FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE NO ACTION;
-
-
 CREATE TABLE users (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     email TEXT NOT NULL,
@@ -41,3 +37,8 @@ CREATE TABLE users (
     locked_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     failed_login_attempts INT DEFAULT 0 NOT NULL
 );
+CREATE INDEX comments_comment_id_index ON comments (comment_id);
+ALTER TABLE comments_reactions ADD CONSTRAINT comments_reactions_ref_comment_id FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE NO ACTION;
+ALTER TABLE comments ADD CONSTRAINT comments_ref_comment_id FOREIGN KEY (comment_id) REFERENCES comments (id) ON DELETE NO ACTION;
+ALTER TABLE comments ADD CONSTRAINT comments_ref_post_id FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE NO ACTION;
+ALTER TABLE posts_reactions ADD CONSTRAINT posts_reactions_ref_post_id FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE NO ACTION;

@@ -20,7 +20,7 @@ instance Controller PostsController where
         let post = newRecord
         render NewView { .. }
 
-    action ShowPostAction { postId } = do
+    action ShowPostAction { postId } = autoRefresh do
         post <- fetch postId
             >>= pure . modify #comments (orderByDesc #createdAt)
             >>= fetchRelated #comments

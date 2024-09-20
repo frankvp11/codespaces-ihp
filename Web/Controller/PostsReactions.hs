@@ -24,7 +24,7 @@ instance Controller PostsReactionsController where
         postsReaction <- fetch postsReactionId
         render EditView { .. }
 
-    action UpdatePostsReactionAction { postsReactionId } = do
+    action UpdatePostsReactionAction { postsReactionId } =  do
         postsReaction <- fetch postsReactionId
         postsReaction
             |> buildPostsReaction
@@ -35,7 +35,7 @@ instance Controller PostsReactionsController where
                     setSuccessMessage "PostsReaction updated"
                     redirectTo EditPostsReactionAction { .. }
 
-    action CreatePostsReactionAction = do
+    action CreatePostsReactionAction = autoRefresh do
         let postsReaction = newRecord @PostsReaction
 
         postsReaction

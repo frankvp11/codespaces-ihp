@@ -1,0 +1,10 @@
+ALTER TABLE comments ALTER COLUMN post_id DROP NOT NULL;
+DROP TRIGGER ar_did_delete_comments ON comments;
+DROP TRIGGER ar_did_delete_posts ON posts;
+DROP TRIGGER ar_did_delete_posts_reactions ON posts_reactions;
+DROP TRIGGER ar_did_insert_comments ON comments;
+DROP TRIGGER ar_did_insert_posts ON posts;
+DROP TRIGGER ar_did_insert_posts_reactions ON posts_reactions;
+DROP TRIGGER ar_did_update_comments ON comments;
+DROP TRIGGER ar_did_update_posts ON posts;
+DROP TRIGGER ar_did_update_posts_reactions ON posts_reactions;

@@ -47,7 +47,7 @@ instance Controller CommentsController where
                 Left comment -> do
 
                     post <- fetch (get #postId comment)
-                    
+                    linkedComment <- fetch (get #commentId comment)
 
                     render NewView { .. }
 
