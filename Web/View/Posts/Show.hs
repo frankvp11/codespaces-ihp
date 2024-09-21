@@ -16,20 +16,18 @@ instance View ShowView where
             <div>{post.body |> renderMarkdown}</div>
             {renderReactions reactions}
             {renderEmojiSelection post.id}
+        </div>
 
             <!-- Add Comment Link -->
+        <a href="#" id="add-comment-link" class="add-comment-link">Add Comment</a>
+
+        <!-- Comment Form (Initially Hidden) -->
+        <div id="comment-form" class="comment-form">
+            {renderCommentForm (Just post.id) Nothing}
         </div>
-            <a href="#" id="add-comment-link" class="add-comment-link">Add Comment</a>
-
-            <!-- Comment Form (Initially Hidden) -->
-            <div id="comment-form" class="comment-form">
-                {renderCommentForm (Just post.id) Nothing}
-            </div>
-
-
 
         <div class="comments-section">
-             {forEach post.comments (\comment -> renderComment comment post)}
+             {renderComments post.comments Nothing}
         </div>
 
         <!-- Custom styles for hover functionality and comment form -->
@@ -156,9 +154,19 @@ renderMarkdown text =
         Left _error -> "Something went wrong"
         Right markdown -> MMark.render markdown |> tshow |> preEscapedToHtml
 
-renderComment comment post = [hsx|
-    <div style="background-color: lightblue; margin-top: 10px;">
+-- Recursive function to render comments and their sub-comments
+renderComments :: [Comment] -> Maybe (Id Comment) -> Html
+renderComments allComments mParentId = 
+    let
+        -- Filter comments based on the current parentId
+        filteredComments = filter (\c -> get #commentId c == mParentId) allComments
+    in
+        forEach filteredComments (\comment -> renderComment allComments comment)
 
+-- Updated renderComment function to handle indentation and sub-comments
+renderComment :: [Comment] -> Comment -> Html
+renderComment allComments comment = [hsx|
+    <div class={commentClass comment}>
         <h5>{comment.author}</h5>
         <p>{comment.body}</p>
 
@@ -167,10 +175,22 @@ renderComment comment post = [hsx|
 
         <!-- Comment Form (Initially Hidden) -->
         <div id={"comment-form-" <> (tshow comment.id)} class="comment-form">
-            {renderCommentForm (Just post.id) (Just comment.id)}
+            {renderCommentForm (Just (get #postId comment)) (Just comment.id)}
+        </div>
+
+        <!-- Render Sub-Comments -->
+        <div class="sub-comments">
+            {renderComments allComments (Just comment.id)}
         </div>
     </div>
 |]
+    where
+        -- Determine CSS classes based on the nesting level
+        commentClass :: Comment -> Text
+        commentClass comment =
+            case get #commentId comment of
+                Nothing -> "comment"
+                Just _  -> "comment indented"
 
 -- Function to render the emoji selection bar
 renderEmojiSelection :: Id Post -> Html
@@ -206,7 +226,6 @@ renderReactions reactions = [hsx|
         {forEach reactions renderReaction}
     </div>
 |]
-
 
 renderReaction (emoji, count) = [hsx|
     <div class="emoji-count">
