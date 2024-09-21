@@ -8,6 +8,7 @@ import Web.View.Posts.Show
 import qualified Text.MMark as MMark
 import Control.Lens (none, non)
 import Application.Script.Prelude (fetchCount)
+import Web.View.PostsReactions.Edit (EditView(postsReaction))
 
 instance Controller PostsController where
     action PostsAction = do
@@ -37,9 +38,23 @@ instance Controller PostsController where
                                 |> fetchCount
                             pure (r.emoji, count)     
                     ) reactions
-        
+        -- commentsReactions should have the shape: [Id, [(Emoji, Count)]]
+        commentReactionsRaw <- query @CommentsReaction
+            |> filterWhereIn (#commentId, get #id <$> get #comments post)
+            |> fetch
+        commentsReactions <- mapM (\cr -> do
+                        count <- query @CommentsReaction
+                            |> filterWhere (#commentId, get #commentId cr)
+                            |> filterWhere (#emoji, get #emoji cr)
+                            |> fetchCount
+                        pure (get #commentId cr, [(get #emoji cr, count)])
+            ) commentReactionsRaw
 
-        render ShowView { post = post, reactions = reactions }
+
+
+
+
+        render ShowView { post = post, postReactions = reactions, commentsReactions = commentsReactions }
 
     action EditPostAction { postId } = do
         post <- fetch postId

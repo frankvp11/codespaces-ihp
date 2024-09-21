@@ -61,3 +61,13 @@ data UsersController
     | UpdateUserAction { userId :: !(Id User) }
     | DeleteUserAction { userId :: !(Id User) }
     deriving (Eq, Show, Data)
+
+data CommentsReactionsController
+    = CommentsReactionsAction
+    | NewCommentsReactionAction
+    | ShowCommentsReactionAction { commentsReactionId :: !(Id CommentsReaction) }
+    | CreateCommentsReactionAction
+    | EditCommentsReactionAction { commentsReactionId :: !(Id CommentsReaction) }
+    | UpdateCommentsReactionAction { commentsReactionId :: !(Id CommentsReaction) }
+    | DeleteCommentsReactionAction { commentsReactionId :: !(Id CommentsReaction) }
+    deriving (Eq, Show, Data)

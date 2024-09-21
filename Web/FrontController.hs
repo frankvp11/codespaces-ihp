@@ -5,6 +5,7 @@ import Web.Controller.Prelude
 import Web.View.Layout (defaultLayout)
 
 -- Controller Imports
+import Web.Controller.CommentsReactions
 import Web.Controller.Users
 import Web.Controller.PostsReactions
 import Web.Controller.Comments
@@ -17,6 +18,7 @@ instance FrontController WebApplication where
     controllers = 
         [ startPage WelcomeAction
         -- Generator Marker
+        , parseRoute @CommentsReactionsController
         , parseRoute @UsersController
         , parseRoute @PostsReactionsController
         , parseRoute @CommentsController

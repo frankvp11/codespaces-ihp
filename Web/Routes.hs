@@ -17,3 +17,6 @@ instance AutoRoute PostsReactionsController
 
 instance AutoRoute UsersController
 
+
+instance AutoRoute CommentsReactionsController
+
