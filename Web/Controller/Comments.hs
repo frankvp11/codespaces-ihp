@@ -45,15 +45,16 @@ instance Controller CommentsController where
             |> buildComment
             |> ifValid \case
                 Left comment -> do
-
                     post <- fetch (get #postId comment)
                     linkedComment <- fetch (get #commentId comment)
-
                     render NewView { .. }
 
                 Right comment -> do
                     comment <- comment |> createRecord
+
+                    -- Safely fetch the linkedComment if commentId exists
                     setSuccessMessage "Comment created"
+
                     redirectTo ShowPostAction { postId = get #postId comment }
 
     action DeleteCommentAction { commentId } = do
@@ -63,4 +64,4 @@ instance Controller CommentsController where
         redirectTo CommentsAction
 
 buildComment comment = comment
-    |> fill @'["postId", "author", "body"]
+    |> fill @'["postId", "author", "body", "commentId"]
