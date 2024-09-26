@@ -15,7 +15,7 @@
     "Setup direnv": "sudo apt install direnv; echo 'eval \"$(direnv hook bash)\"' >> ~/.bashrc",
     "Set IHP BASEURL": "echo 'export IHP_BASEURL=$(if [ -n \"${CODESPACE_NAME}\" ]; then echo \"https://${CODESPACE_NAME}-8000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}\"; else echo \"http://localhost:8000\"; fi)' >> ~/.bashrc",
     "Set IHP IDE BASEURL": "echo 'export IHP_IDE_BASEURL=$(if [ -n \"${CODESPACE_NAME}\" ]; then echo \"https://${CODESPACE_NAME}-8001.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}\"; else echo \"http://localhost:8001\"; fi)' >> ~/.bashrc",
-    "Fix nix Permissions": "sudo apt install acl; sudo setfacl -k /tmp",
+    "Fix nix Permissions": "sudo apt install acl; sudo setfacl -k /home/",
     "Allow direnv": "mkdir -p ~/.config/direnv; touch ~/.config/direnv/direnv.toml; echo \"[whitelist]\nprefix = ['/workspaces/']\" >> ~/.config/direnv/direnv.toml"
   },
 
